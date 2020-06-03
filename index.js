@@ -7,6 +7,11 @@ function ask(questionText) {
   });
 }
 
+function randomNum(min, max) {
+//trims decimal places, makes inclusive on high and low ends.
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 start();
 
 async function start() {
