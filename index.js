@@ -12,6 +12,11 @@ function randomNum(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
+//finds and returns the exact middle value of two given numbers
+  function splitNum(min, max) {
+    return Math.round((min+max)/2);
+  }
+
   function sanitize(input) {
     if (input === undefined) {
       console.log('Please enter a valid response.')
@@ -21,11 +26,15 @@ function randomNum(min, max) {
     }
   }
 
-async function guess (min, max, count, secretNumber) {
-  let myGuess = randomNum(min, max)
+async function guess (min, max, count, secretNumber, isHigh) {
+  let myGuess = splitNum(min, max);
+  /* if (isHigh === 'yes') {
+    myGuess = Math.ceil(myGuess);
+  } else {
+    myGuess = Math.floor(myGuess);
+  } */
   let input = await ask(`Is your number... ${myGuess}?`);
     count = count + 1;
-    console.log(count);
     sanitize(input);
   if(yesAnswers.includes(input) && secretNumber == myGuess) {
     youWin(count, secretNumber);
@@ -45,7 +54,8 @@ function sanitize(input) {
 }
 
 async function youWin(count, secretNumber) {
-  if(secretNumber === 42) {
+  await ask(`I got it right!`);
+  if(secretNumber == 42) {
     await ask(`Your number was the answer to Life, the Universe, and Everything!`);
   } else {
   await ask(`Your number was ${secretNumber}!`);
@@ -59,7 +69,8 @@ async function youWin(count, secretNumber) {
   if(yesAnswers.includes(newGame)) {
     start();
   } else {
-    console.log(`Goodbye.`)
+    console.log(`Goodbye.`);
+    process.exit()
   }
 }
 
@@ -70,9 +81,11 @@ async function highLow(min, max, count, secretNumber, computerGuess) {
       if (highAnswers.includes(higherLower)) {
         //sets the new min to above the last guess and then makes a new guess
         min = computerGuess + 1;
-        guess(min, max, count, secretNumber, computerGuess);
+        isHigh = 'yes';
+        guess(min, max, count, secretNumber, isHigh);
         //if they say that it's lower
       } else if (lowAnswers.includes(higherLower)) {
+        isHigh = 'no';
         //unless they already said it was higher
         if(guess === min) {
           console.log(`But you said it was higher than ${min}`)
@@ -107,8 +120,7 @@ async function start() {
   let input = await ask(`Is your number... ${computerGuess}?`);
     sanitize(input);
     count = count + 1;
-    console.log(count);
-  //if player says yes and it mathes the original secret number value
+  //if player says yes and it matches the original secret number value
   if(yesAnswers.includes(input)) {
     youWin(count, secretNumber);
   } //if player says no
