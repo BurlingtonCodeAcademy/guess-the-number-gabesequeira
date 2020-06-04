@@ -49,8 +49,11 @@ async function youWin(count, secretNumber) {
     await ask(`Your number was the answer to Life, the Universe, and Everything!`);
   } else {
   await ask(`Your number was ${secretNumber}!`);
-  }
+  } if (count === 1) {
+    await ask(`I guessed it in ${count} try.`)
+  } else {
   await ask(`I guessed it in ${count} tries.`);
+  }
   let newGame = await ask (`Play again? (Y/N)`);
   sanitize(newGame);
   if(yesAnswers.includes(newGame)) {
@@ -58,7 +61,6 @@ async function youWin(count, secretNumber) {
   } else {
     console.log(`Goodbye.`)
   }
-  process.exit();
 }
 
 async function highLow(min, max, count, secretNumber, computerGuess) {
@@ -66,9 +68,8 @@ async function highLow(min, max, count, secretNumber, computerGuess) {
       let higherLower = await ask(`Is it higher (h) or lower (l) than ${computerGuess}?`);
       sanitize(higherLower);
       if (highAnswers.includes(higherLower)) {
-        //sets the min to the previous guess
-        min = computerGuess;
-      //then makes a new guess
+        //sets the new min to above the last guess and then makes a new guess
+        min = computerGuess + 1;
         guess(min, max, count, secretNumber, computerGuess);
         //if they say that it's lower
       } else if (lowAnswers.includes(higherLower)) {
@@ -77,7 +78,7 @@ async function highLow(min, max, count, secretNumber, computerGuess) {
           console.log(`But you said it was higher than ${min}`)
         } else {
           //it sets a new max
-        max = computerGuess;
+        max = computerGuess - 1;
         //and makes a modified guess based on that output
         guess(min, max, count, secretNumber, computerGuess);
         }
@@ -88,30 +89,27 @@ let yesAnswers = ['yes', 'y', 'it is'];
 let noAnswers = ['no', 'n', 'nope', 'not'];
 let highAnswers = ['higher', 'high', 'h'];
 let lowAnswers = ['lower', 'low', 'l'];
+let min = 1;
+let max = 100;
+let count = 0;
+let playerNumber = ''
 
 start();
 
 async function start() {
-  let min = 1;
-  let max = 100;
-  let count = 0;
   //decides the first guess and logs it out to the console.
   let computerGuess = randomNum(min, max);
-  console.log(`My first guess will be ${computerGuess}`);
   //declares rules of the game
-  await ask("Let's play a game where you think of a number between 1 and 100 (inclusive)");
-  await ask("And I (the computer) will guess what it is.");
+  await ask("Let's play a game where you think of a number between 1 and 100 (inclusive) and I (the computer) will guess what it is.");
   //asks what the secret number is
   let secretNumber = await ask("What is your secret number?\nI won't peek, I promise...\n");
-  console.log(`(You entered: ${secretNumber}.)`);
+  playerNumber = secretNumber;
   let input = await ask(`Is your number... ${computerGuess}?`);
+    sanitize(input);
     count = count + 1;
     console.log(count);
-  sanitize(input);
-  //if player says yes and it matches the original secret number value
-  if(yesAnswers.includes(input) && (computerGuess === secretNumber)) {
-    //increments count
-    //and displays a winning message
+  //if player says yes and it mathes the original secret number value
+  if(yesAnswers.includes(input)) {
     youWin(count, secretNumber);
   } //if player says no
   if (noAnswers.includes(input)) {
