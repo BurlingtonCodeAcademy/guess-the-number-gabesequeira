@@ -39,6 +39,9 @@ function randomNum(min, max) {
   }
 
   function youWin() {
+  min = 0;
+  max = 100;
+  computerGuess = 50;
     console.log(`I got it right!`);
     console.log(`Your number was ${secretNumber}!`);
     if (count === 1) {
@@ -61,6 +64,7 @@ function randomNum(min, max) {
 
     start();
 
+
     async function start() {
     //assigns a number to variable computerGuess between 0-100 and trims the decimal place.
           computerGuess = split(min, max);
@@ -72,28 +76,7 @@ function randomNum(min, max) {
           //checks to make sure it's a positive integer.
           while(!(Number.isInteger(secretNumber)) && !(secretNumber > 0)) {
             secretNumber = await ask(`Please enter a number between ${min+1} and ${max}.\n>_`)
-          } //asks if it's equal to computerGuess
-          let input = await ask(`Is it... ${computerGuess}?\n>_`)
-          count = count + 1;
-      //if they say yes
-          if (ANSWERS_POS.includes(input)) {
-            if (secretNumber === computerGuess) {
-            youWin(count, secretNumber);
-          } else {
-            //if so, asks them to answer again.
-            console.log(`But you said it was ${secretNumber}.`);
-            input = await ask(`Is it... ${computerGuess}?\n>_`)
-          }
-         } else if (ANSWERS_NEG.includes(input)) {
-            //if they said no, good! we can ask if it's higher or lower.
-            if (!(secretNumber === computerGuess)) {
-            higherLower()
-          } else {
-            //unless the computer guessed right, in which case we can ask for the real response.
-            console.log(`But you said that it was ${secretNumber}.`);
-            input = await ask(`Is it... ${computerGuess}?\n>_`)
-          } //asks for a yes or a no if response unintelligible.
-        } input = await ask(`Please enter yes or no.\n>_`)
+          } guess();
         }
 
 //higherLower is a recursive function that uses while loops and if statements to get the right input from user. It might be the best-written function in the program thus far.
@@ -145,10 +128,10 @@ async function guess() {
         //if they say that the secret number was guessed...
         if (ANSWERS_POS.includes(answer)) {
           //and it was, goes to win sequence
-          if (secretNumber === computerGuess) {
-                youWin(count, secretNumber)
+          if (secretNumber == computerGuess) {
+                youWin()
           //If not it says "are you sure?" and asks again.
-            } if (!(secretNumber === computerGuess)) {
+            } if (!(secretNumber == computerGuess)) {
                 console.log(`Are you sure about that?`)
                 answer = await ask(`Is your number... ${computerGuess}?\n>_`)
               }
@@ -162,6 +145,6 @@ async function guess() {
                 console.log(`Are you sure about that?`)
                   answer = await ask(`Is your number... ${computerGuess}?\n>_`)
             //if they neither say yes nor no, asks for yes or no input.
-              } answer = await ask(`Please type yes or no.`)
+              } answer = await ask(`Please enter yes or no.`)
             }
           }
