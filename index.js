@@ -90,15 +90,10 @@ function randomNum(min, max) {
     computerGuess = Math.ceil(split(min, max));
     guess();
     //if they say that it's lower, we know that they're lying and ask for a truthful input
-    } else if (ANSWERS_LOW.includes(higher)) {
-      console.log(`But you already said it was higher than ${computerGuess}.`);
-      higherLower();
-    //if they say neither higher nor lower, asks for a valid response
     } else {
-      console.log(`Please enter a valid response.`);
+      console.log(`Are you sure?`);
       higherLower();
-    }
-    //while secretnumber is lower than guess
+    } //while secretnumber is lower than guess
   } while (secretNumber < computerGuess) {
       let lower = await ask(`Is it higher (h) or lower (l) than ${computerGuess}?\n`);
       sanitize(lower);
@@ -109,15 +104,12 @@ function randomNum(min, max) {
         computerGuess = Math.floor(split(min, max));
         guess();
         //otherwise it asks the question again
-      } else if (ANSWERS_HIGH.includes(lower)) {
-        console.log(`But you already said it was lower than ${computerGuess}.`);
-        higherLower();
-        //else asks for a valid input
       } else {
-        console.log(`Please enter a valid input.`)
+        console.log(`Are you sure?`);
+        higherLower();
+      }
       }
   }
-}
 
 async function guess() { 
   while (secretNumber > computerGuess) {
