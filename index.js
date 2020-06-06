@@ -38,32 +38,27 @@ function randomNum(min, max) {
     }
   }
 
-  function youWin() {
-  min = 0;
-  max = 100;
-  computerGuess = 50;
+  async function youWin() {
     console.log(`I got it right!`);
     console.log(`Your number was ${secretNumber}!`);
     if (count === 1) {
       console.log(`I guessed it in ${count} try.`)
     } else {
     console.log(`I guessed it in ${count} tries.`);
-    } playAgain();
-  }
-
-  async function playAgain() {
-    let newGame = await ask (`Play again? (Y/N)`);
-    sanitize(newGame);
-    if(ANSWERS_POS.includes(newGame)) {
+    }  let playAgain = await ask (`Play again? (Y/N)`);
+    sanitize(playAgain);
+    if(ANSWERS_POS.includes(playAgain)) {
+      min = 0;
+      max = 100;
+      computerGuess = 50;
       start();
     } else {
       console.log(`Goodbye.`);
       process.exit()
     }
-    }
+  }
 
     start();
-
 
     async function start() {
     //assigns a number to variable computerGuess between 0-100 and trims the decimal place.
@@ -79,9 +74,9 @@ function randomNum(min, max) {
           } guess();
         }
 
-//higherLower is a recursive function that uses while loops and if statements to get the right input from user. It might be the best-written function in the program thus far.
+//higherLower is a recursive function that uses while loops and if statements to get the right input from user.
   async function higherLower() {
-    //while secret number higher than guess
+    //while secret number is higher than guess
   while (secretNumber > computerGuess) {
     let higher = await ask(`Is it higher (h) or lower (l) than ${computerGuess}?\n>_`);
     sanitize(higher);
@@ -128,10 +123,10 @@ async function guess() {
         //if they say that the secret number was guessed...
         if (ANSWERS_POS.includes(answer)) {
           //and it was, goes to win sequence
-          if (secretNumber == computerGuess) {
+          if (secretNumber === computerGuess) {
                 youWin()
           //If not it says "are you sure?" and asks again.
-            } if (!(secretNumber == computerGuess)) {
+            } if (!(secretNumber === computerGuess)) {
                 console.log(`Are you sure about that?`)
                 answer = await ask(`Is your number... ${computerGuess}?\n>_`)
               }
