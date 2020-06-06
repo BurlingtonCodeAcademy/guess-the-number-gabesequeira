@@ -7,11 +7,12 @@ function ask(questionText) {
   });
 }
 
-//declares variables to determine user input, and stores them in arrays.
+//declares variables to determine user input, storing them in arrays.
 let ANSWERS_POS = ['yes', 'y', 'it is', 'sure'];
 let ANSWERS_NEG = ['no', 'n', 'nope', 'not'];
 let ANSWERS_HIGH = ['higher', 'high', 'h'];
 let ANSWERS_LOW = ['lower', 'low', 'l'];
+//declares variables to determine the game's parameters, stores them globally so as to be seen and acted upon by all functions.
 let min = 0;
 let max = 100;
 let count = 0;
@@ -23,12 +24,12 @@ function randomNum(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-//returns the point between two given integers
+//split returns the point between two given integers
   function split(min, max) {
     return ((min+max)/2);
   }
 
-//converts a string to lower case
+//sanitize function converts string to lower case to be read by computer
   function sanitize(input) {
     if (input === undefined) {
       console.log('Please enter a valid response.')
@@ -39,6 +40,7 @@ function randomNum(min, max) {
   }
 
   async function youWin() {
+  //displays win message, tells you number of tries and gives option to play another game
     console.log(`I got it right!`);
     console.log(`Your number was ${secretNumber}!`);
     if (count === 1) {
@@ -48,6 +50,7 @@ function randomNum(min, max) {
     }  let playAgain = await ask (`Play again? (Y/N)`);
     sanitize(playAgain);
     if(ANSWERS_POS.includes(playAgain)) {
+  //if playagain = yes, program resets the game's variables and calls start again, else quits.
       min = 0;
       max = 100;
       computerGuess = 50;
@@ -61,20 +64,20 @@ function randomNum(min, max) {
     start();
 
     async function start() {
-    //assigns a number to variable computerGuess between 0-100 and trims the decimal place.
+    //assigns a number between 0-100 to computerGuess, trimming decimal place.
           computerGuess = split(min, max);
           computerGuess = Math.floor(computerGuess);
             await ask("Let's play a game where you (human) think of a number between 1 and 100 and I (the computer) will guess what it is.");
           //asks for the secret number and converts it to integer.
           secretNumber = await ask("What is your secret number? I won't peek, I promise...\n>_");
           secretNumber = parseInt(secretNumber);
-          //checks to make sure it's a positive integer.
+          //must be a positive integer.
           while(!(Number.isInteger(secretNumber)) && !(secretNumber > 0)) {
             secretNumber = await ask(`Please enter a number between ${min+1} and ${max}.\n>_`)
           } guess();
         }
 
-//higherLower is a recursive function that uses while loops and if statements to get the right input from user.
+//higherLower is a recursive function that uses while loops and if statements to get the right input from user. This is one way to solve it, but I know there's a way to refactor this code to be shorter.
   async function higherLower() {
     //while secret number is higher than guess
   while (secretNumber > computerGuess) {
