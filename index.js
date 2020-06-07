@@ -43,33 +43,31 @@ function randomNum(min, max) {
 
     start();
 
-    function sanitizeNum() {
-
-    }
-
     async function start() {
+      //exposition/intro
         console.log(`Welcome to Guess The Number! In this game, you will think of a number and the let the computer guess what it's equal to, or you will guess what the computer's number will be. The number is between a minimum and a maximum range.`);
-        user = await ask(`First, tell me: What is your name?`)
+        user = await ask(`First, tell me: What is your name?`);
+//What if they just press enter without typing a name? Is there a way to guard against that?
         game = await ask (`Press (1) if you'd like think of the number first and let the computer guess, or if you prefer the computer to think of a number so ${user} can guess what it is, press (2).`);
         game = +game;
       while(Number.isInteger(game) !== true || game <= 0 || game >= 3) {
         console.log(`Please press either 1 or 2 and press [enter].`)
-        game = await ask (
-          `What version of guess the number would you like to play?`
-          ); 
+        game = await ask (`What version of guess the number would you like to play?`); 
+        game = +game;
         } game = +game;
         let min = await ask(`Now what would you like for the minimum range to be (zero or greater)?`);
         min = +min;
       while(Number.isInteger(min) !== true || min < 0) {
         console.log(`Please enter a positive integer of zero or greater.`);
         min = await ask(`What would you like to set for the minimum?`);
-      } min = +min;
-      let max = await ask(`What would you like for the maximum number to be?`);
+        min = +min;
+      } let max = await ask(`What would you like for the maximum number to be?`);
       max = +max;
       while(Number.isInteger(max) !== true || max <= min) {
         console.log(`Please enter an integer greater than ${min}.`);
         max = await ask(`Please select a maximum value.`);
-      } max = +max;
+        max = +max;
+      }
 if (game === 1) {
         computerGuess = split(min, max);
         computerGuess = Math.floor(computerGuess);
@@ -91,51 +89,76 @@ if (game === 1) {
     let answer = await ask (`Is your number... ${computerGuess}?\n>_`);
     count = count + 1;
 //we wait to sanitize input only once they have evtered a value, because sanitize cannot lowercase undefined.
-    while (answer === undefined || ANSWERS_POS.includes(answer) === false || ANSWERS_NEG.includes(answer) === false) {
+    while (answer === undefined) {
       console.log(`Please enter yes or no.`);
       answer = await ask (`Is your number... ${computerGuess}?\n>_`);
+      sanitize(answer);
     }
     sanitize(answer);
+    while(secretNumber !== computerGuess) {
     if (ANSWERS_POS.includes(answer)) {
-      while(secretNumber !== computerGuess) {
         console.log(`Are you sure about that?`);
         answer = await ask(`Is your number... ${computerGuess}?\n>_`);
+        sanitize(answer);
       } youWin();
-      } if (ANSWERS_NEG.includes(answer)) {
-      while(secretNumber === computerGuess) {
+      if (ANSWERS_NEG.includes(answer)) {
+        higherLower();
+      } else {
+        console.log(`Please enter yes or no.`);
+        answer = await ask(`Is your number... ${computerGuess}?\n>_`);
+        sanitize(answer);
+      }
+     } while(secretNumber === computerGuess) {
+     if (ANSWERS_NEG.includes(answer)) {
         console.log(`Are you sure about that?`);
         answer = await ask(`Is your number... ${computerGuess}?\n>_`);
-      }
+        sanitize(answer);
+      } if (ANSWERS_POS.includes(answer)) {
         higherLower();
+      } else {
+        console.log(`Please say yes or no.`)
+        answer = await ask(`Is your number... ${computerGuess}?\n>_`)
       }
     }
+  }
 
   async function higherLower() {
   let higher = await ask(`Is it higher (h) or lower (l) than ${computerGuess}?\n>_`);
-    sanitize(higher);
-    if(ANSWERS_HIGH.includes(higher) === false || ANSWERS_LOW.includes(higher) === false || higher === undefined) {
+    while(higher === undefined) {
       console.log(`Please say if it's higher or lower.`);
       higher = await ask(`Is it higher or lower than ${computerGuess}?`)
-    }
-    //if input says "high", checks it against variables, makes new guess if congruent, else asks again.
-    if (ANSWERS_HIGH.includes(higher)) {
+    } sanitize(higher);
+    //if it's lower, and if they said "high", asks again. If they said "low" it goes through to the next guess.
       while(secretNumber <= computerGuess) {
-        console.log(`You said it was higher than that.`)
+        if (ANSWERS_HIGH.includes(higher)) {
+        console.log(`You said it was lower than that.`)
         higher = await ask(`Is it higher or lower than ${computerGuess}?`);
-      }
-    min = computerGuess;
-    computerGuess = Math.ceil(split(min, max));
-    guess();
-     } if (ANSWERS_LOW.includes(higher)) {
-      while(secretNumber >= computerGuess) {
-        console.log(`You said it was higher than that.`)
-        higher = await ask(`Is it higher or lower than ${computerGuess}?`);
-      }
+        sanitize(higher);
+      } if (ANSWERS_LOW.includes(higher)) {
         max = computerGuess;
         computerGuess = Math.floor(split(min, max));
         guess();
+      } else {
+        console.log(`Please enter higher or lower.`);
+        higher = await ask(`Is it higher or lower than ${computerGuess}?`);
+        sanitize(higher);
       }
-  }
+     } while(secretNumber >= computerGuess) {
+        if(ANSWERS_HIGH.includes(higher)) {
+          min = computerGuess;
+          computerGuess = Math.ceil(split(min, max));
+          guess();
+        } if (ANSWERS_LOW.includes(higher)) {
+          console.log(`You said it was higher than that.`)
+          higher = await ask(`Is it higher or lower than ${computerGuess}?`);
+          sanitize(higher);
+        } else {
+          console.log(`Please enter higher or lower.`);
+          higher = await ask(`Is it higher or lower than ${computerGuess}?`);
+          sanitize(higher);
+        }
+      }
+    }
 
   async function youWin() {
     //displays win message, tells you number of tries and gives option to play another game
