@@ -20,6 +20,8 @@ let computerGuess = 0;
 let secretNumber = 0;
 let game = 0;
 let user = [];
+let computerScore = 0;
+let userScore = 0;
 
 //produces a random number
 function randomNum(min, max) {
@@ -117,6 +119,7 @@ if (game === 1) {
         answer = await ask(`Is your number... ${computerGuess}?\n>_`);
         sanitize(answer);
       } if (ANSWERS_POS.includes(answer)) {
+        computerScore = computerScore + 1;
         youWin();
         break;
       } else {
@@ -131,10 +134,11 @@ if (game === 1) {
   sanitize(higher);
     while(higher === undefined) {
       console.log(`Please say if it's higher or lower.`);
-      higher = await ask(`Is it higher or lower than ${computerGuess}?`)
-    } sanitize(higher);
+      higher = await ask(`Is it higher or lower than ${computerGuess}?`);
+      sanitize(higher);
+    } 
     //if it's lower, and if they said "high", asks again. If they said "low" it goes through to the next guess.
-      while(secretNumber < computerGuess) {
+      while(secretNumber <= computerGuess) {
         while (ANSWERS_HIGH.includes(higher)) {
         console.log(`You said it was lower than that.`)
         higher = await ask(`Is it higher or lower than ${computerGuess}?`);
@@ -149,11 +153,12 @@ if (game === 1) {
         higher = await ask(`Is it higher or lower than ${computerGuess}?`);
         sanitize(higher);
       }
-     } while(secretNumber > computerGuess) {
+     } while(secretNumber >= computerGuess) {
         while(ANSWERS_LOW.includes(higher)) {
           console.log(`You said it was higher than that.`)
           higher = await ask(`Is it higher or lower than ${computerGuess}?`);
           sanitize(higher);
+          break;
         } if (ANSWERS_HIGH.includes(higher)) {
           min = computerGuess;
           computerGuess = Math.ceil(split(min, max));
@@ -175,7 +180,8 @@ if (game === 1) {
         console.log(`I guessed it in ${count} try.`)
       } else {
       console.log(`I guessed it in ${count} tries.`);
-      }  let playAgain = await ask (`Play again? (Y/N)`);
+      } console.log(`Computer: ${computerScore}, ${user}: ${userScore}.`)
+        let playAgain = await ask (`Play again? (Y/N)`);
       sanitize(playAgain);
       if(ANSWERS_POS.includes(playAgain)) {
         min = 0;
