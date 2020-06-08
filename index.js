@@ -55,13 +55,13 @@ function randomNum(min, max) {
         game = await ask (`What version of guess the number would you like to play?`); 
         game = +game;
         } game = +game;
-        let min = await ask(`Now, what should we set for the minimum value (zero or greater)?`);
+        min = await ask(`Now, what should we set for the minimum value (zero or greater)?`);
         min = +min;
       while(Number.isInteger(min) !== true || min < 0) {
         console.log(`Please enter a positive integer of zero or greater.`);
         min = await ask(`What would you like to set for the minimum?`);
         min = +min;
-      } let max = await ask(`What would you like for the maximum number to be?`);
+      } max = await ask(`What would you like for the maximum number to be?`);
       max = +max;
       while(Number.isInteger(max) !== true || max <= min) {
         console.log(`Please enter an integer greater than ${min}.`);
@@ -81,14 +81,14 @@ if (game === 1) {
               } guess();
             }
   if (game === 2) {
-    console.log(`We'll get to this later.`)
+    console.log(`We'll get to this later.`);
+    process.exit();
   }
           }
 
     async function guess() {
     computerGuess = Math.ceil(computerGuess);
     let answer = await ask (`Is your number... ${computerGuess}?\n>_`);
-    console.log(`secret number is: ${secretNumber}. Guessed number is: ${computerGuess}`);
     count = count + 1;
 //we wait to sanitize input only once they have evtered a value, because sanitize cannot lowercase undefined.
     while (answer === undefined) {
@@ -143,20 +143,22 @@ if (game === 1) {
         max = computerGuess;
         computerGuess = Math.floor(split(min, max));
         guess();
+        break;
       } else {
         console.log(`Please enter higher or lower.`);
         higher = await ask(`Is it higher or lower than ${computerGuess}?`);
         sanitize(higher);
       }
      } while(secretNumber > computerGuess) {
-        while(ANSWERS_HIGH.includes(higher)) {
-          min = computerGuess;
-          computerGuess = Math.ceil(split(min, max));
-          guess();
-        } if (ANSWERS_LOW.includes(higher)) {
+        while(ANSWERS_LOW.includes(higher)) {
           console.log(`You said it was higher than that.`)
           higher = await ask(`Is it higher or lower than ${computerGuess}?`);
           sanitize(higher);
+        } if (ANSWERS_HIGH.includes(higher)) {
+          min = computerGuess;
+          computerGuess = Math.ceil(split(min, max));
+          guess();
+          break;
         } else {
           console.log(`Please enter higher or lower.`);
           higher = await ask(`Is it higher or lower than ${computerGuess}?`);
@@ -176,7 +178,6 @@ if (game === 1) {
       }  let playAgain = await ask (`Play again? (Y/N)`);
       sanitize(playAgain);
       if(ANSWERS_POS.includes(playAgain)) {
-    //if playagain = yes, program resets the game's variables and calls start again, else quits.
         min = 0;
         max = 0;
         computerGuess = 0;
