@@ -35,12 +35,7 @@ function split(min, max) {
 
 //sanitize function converts string to lower case to be read by computer
 function sanitize(input) {
-  if (input === ``) {
-    console.log('Please enter a valid response.')
-  } else {
-    input = input[0].toLowerCase;
-    return input;
-  }
+    return input[0].toLowerCase;
 }
 
 start();
@@ -114,14 +109,12 @@ async function guess() {
       sanitize(answer);
     } if (secretNumber === computerGuess) {
       computerScore = computerScore + 1;
-      youWin(); 
-      break;
+      return youWin();
     }
   }
     while (ANSWERS_NEG.includes(answer)) {
       if (secretNumber !== computerGuess) {
-        higherLower();
-        break;
+        return higherLower();
       }
       if (secretNumber === computerGuess) {
         console.log(`Please enter yes or no.`);
@@ -133,38 +126,34 @@ async function guess() {
 
 async function higherLower() {
   let higher = await ask(`Is it higher (h) or lower (l) than ${computerGuess}?\n>_`);
-//makes sure higher is not undefined before sanitizing so as not to cause bugs
   while (higher === ``) {
     console.log(`Please say if it's higher or lower.`);
     higher = await ask(`Is it higher or lower than ${computerGuess}?`);
+  }
+  sanitize(higher);
+//we use a while loop to check potential user inputs and then coerce the code into responses based on existing conditions of variables.
+if (secretNumber < computerGuess) {
+  while (ANSWERS_HIGH.includes(higher)) {
+    console.log(`You said it was lower than that.`)
+    higher = await ask(`Is it higher or lower than ${computerGuess}?`);
     sanitize(higher);
+  } if (ANSWERS_LOW.includes(higher)) {
+    max = computerGuess;
+    computerGuess = Math.floor(split(min, max));
+    return guess();
+}
+}
+if (secretNumber > computerGuess) {
+  while (ANSWERS_LOW.includes(higher)) {
+    console.log(`You said it was higher than that.`)
+    higher = await ask(`Is it higher or lower than ${computerGuess}?`);
+    sanitize(higher);
+  } if (ANSWERS_HIGH.includes(higher)) {
+    min = computerGuess;
+    computerGuess = Math.ceil(split(min, max));
+    return guess();
   }
-  //if it's lower, and if they said "high", asks again. If they said "low" it goes through to the next guess.
-  //uses a while loop to check for incorrect input before going on to a truth condition
-    while (ANSWERS_HIGH.includes(higher)) {
-      if (secretNumber < computerGuess) {
-      console.log(`You said it was lower than that.`)
-      higher = await ask(`Is it higher or lower than ${computerGuess}?`);
-      sanitize(higher);
-    } if (secretNumber > computerGuess) {
-      min = computerGuess;
-      computerGuess = Math.ceil(split(min, max));
-      guess();
-      break;
-    }
-  }
-    while (ANSWERS_LOW.includes(higher)) {
-      if (secretNumber < computerGuess) {
-      max = computerGuess;
-      computerGuess = Math.floor(split(min, max));
-      guess();
-      break;
-       } if (secretNumber > computerGuess) {
-        console.log(`You said it was higher than that.`)
-        higher = await ask(`Is it higher or lower than ${computerGuess}?`);
-        sanitize(higher);
-    }
-  }
+}
 }
 
 async function youWin() {
